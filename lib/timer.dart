@@ -29,28 +29,29 @@ class TimerState extends State<TimerStateful> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-            body: new Container(
-              padding: const EdgeInsets.all(90),
-              alignment: Alignment.center,
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  clocka(context),
-                  FloatingActionButton(
-                    child: Icon(buttonIcon, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        if (!timerActive) {
-                          startTimer();
-                        } else {
-                          stopTimer();
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ));
+        body: new Container(
+      padding: const EdgeInsets.all(90),
+      alignment: Alignment.center,
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          clocka(context),
+          Expanded(
+              child: FloatingActionButton(
+            child: Icon(buttonIcon, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                if (!timerActive) {
+                  startTimer();
+                } else {
+                  stopTimer();
+                }
+              });
+            },
+          ))
+        ],
+      ),
+    ));
   }
 
   void initState() {
@@ -156,11 +157,12 @@ class TimerState extends State<TimerStateful> {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(children: [
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: hours,
                   itemExtent: 60,
-                  listViewWidth: 150,
+                  listViewWidth: 50,
                   minValue: 0,
                   maxValue: 23,
                   zeroPad: true,
@@ -172,12 +174,13 @@ class TimerState extends State<TimerStateful> {
                 "Hours",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
-            Column(children: [
+            ])),
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: minutes,
                   itemExtent: 60,
-                  listViewWidth: 150,
+                  listViewWidth: 50,
                   minValue: 0,
                   maxValue: 59,
                   zeroPad: true,
@@ -189,12 +192,13 @@ class TimerState extends State<TimerStateful> {
                 "Minutes",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
-            Column(children: [
+            ])),
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: seconds,
                   itemExtent: 60,
-                  listViewWidth: 150,
+                  listViewWidth: 50,
                   minValue: 0,
                   maxValue: 59,
                   zeroPad: true,
@@ -206,7 +210,7 @@ class TimerState extends State<TimerStateful> {
                 "Seconds",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
+            ])),
           ]);
     }
   }
