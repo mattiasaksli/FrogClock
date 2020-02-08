@@ -5,14 +5,14 @@ import 'package:flutter/services.dart';
 
 class TimerStateful extends StatefulWidget {
   @override
-  TimerStateless createState() => TimerStateless();
+  TimerState createState() => TimerState();
 }
 
 String displayHours = "";
 String displayMinutes = "";
 String displaySeconds = "";
 
-class TimerStateless extends State<TimerStateful> {
+class TimerState extends State<TimerStateful> {
   int hours = 0;
   int minutes = 0;
   int seconds = 0;
@@ -26,12 +26,7 @@ class TimerStateless extends State<TimerStateful> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text("Timer"),
-          ),
+    return Scaffold(
           body: new Container(
             padding: const EdgeInsets.all(90),
             alignment: Alignment.center,
@@ -123,7 +118,7 @@ class TimerStateless extends State<TimerStateful> {
               ],
             ),
           ),
-        ));
+        );
   }
 
   void initState() {
