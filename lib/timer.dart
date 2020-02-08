@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'debug.dart';
 
 class TimerStateful extends StatefulWidget {
   @override
@@ -180,6 +181,7 @@ class TimerStateless extends State<TimerStateful> {
     });
 
     totalSeconds = seconds + minutes * 60 + hours * 60 * 60;
+    setFrogTimer(hours, minutes, seconds);
     t = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (totalSeconds != 0) {
