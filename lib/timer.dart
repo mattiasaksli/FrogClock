@@ -23,11 +23,10 @@ class TimerStateless extends State<TimerStateful> {
   final _controllerS = TextEditingController();
 
   bool timerActive = false;
-  String timerButtonText = "Start timer";
+  IconData buttonIcon = Icons.play_arrow;
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
@@ -40,69 +39,9 @@ class TimerStateless extends State<TimerStateful> {
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                      Widget>[
-                    Column(children: [
-                      new NumberPicker.integer(
-                          initialValue: hours,
-                          itemExtent: 60,
-                          listViewWidth: 150,
-                          minValue: 0,
-                          maxValue: 23,
-                          zeroPad: true,
-                          infiniteLoop: true,
-                          onChanged: (val) => setState(() {
-                                hours = val.toInt();
-                              })),
-                      Text(
-                        "Hours",
-                        style:
-                            TextStyle(color: theme.disabledColor, fontSize: 10),
-                      )
-                    ]),
-                    Column(children: [
-                      new NumberPicker.integer(
-                          initialValue: minutes,
-                          itemExtent: 60,
-                          listViewWidth: 150,
-                          minValue: 0,
-                          maxValue: 59,
-                          zeroPad: true,
-                          infiniteLoop: true,
-                          onChanged: (val) => setState(() {
-                                minutes = val.toInt();
-                              })),
-                      Text(
-                        "Minutes",
-                        style:
-                            TextStyle(color: theme.disabledColor, fontSize: 10),
-                      )
-                    ]),
-                    Column(children: [
-                      new NumberPicker.integer(
-                          initialValue: seconds,
-                          itemExtent: 60,
-                          listViewWidth: 150,
-                          minValue: 0,
-                          maxValue: 59,
-                          zeroPad: true,
-                          infiniteLoop: true,
-                          onChanged: (val) => setState(() {
-                                seconds = val.toInt();
-                              })),
-                      Text(
-                        "Seconds",
-                        style:
-                            TextStyle(color: theme.disabledColor, fontSize: 10),
-                      )
-                    ]),
-                  ]),
-                  Expanded(
-                    //margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    child: BlinkingTextAnimation(),
-                  ),
-                  RaisedButton(
-                    child: Text("$timerButtonText"),
+                  clocka(context),
+                  FloatingActionButton(
+                    child: Icon(buttonIcon, color: Colors.white),
                     onPressed: () {
                       setState(() {
                         if (!timerActive) {
@@ -165,7 +104,7 @@ class TimerStateless extends State<TimerStateful> {
   void startTimer() {
     setState(() {
       timerActive = true;
-      timerButtonText = "Stop timer";
+      buttonIcon = Icons.pause;
       _controllerH.text = "";
       _controllerM.text = "";
       _controllerS.text = "";
@@ -196,7 +135,7 @@ class TimerStateless extends State<TimerStateful> {
     setState(() {
       t.cancel();
       timerActive = false;
-      timerButtonText = "Start timer";
+      buttonIcon = Icons.play_arrow;
     });
   }
 
@@ -209,6 +148,70 @@ class TimerStateless extends State<TimerStateful> {
     stopTimer();
 
     //FROG LOGIC
+  }
+
+  clocka(context) {
+    var theme = Theme.of(context);
+
+    if (timerActive) {
+      return BlinkingTextAnimation();
+    } else {
+      return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(children: [
+              new NumberPicker.integer(
+                  initialValue: hours,
+                  itemExtent: 60,
+                  listViewWidth: 150,
+                  minValue: 0,
+                  maxValue: 23,
+                  zeroPad: true,
+                  infiniteLoop: true,
+                  onChanged: (val) => setState(() {
+                        hours = val.toInt();
+                      })),
+              Text(
+                "Hours",
+                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+              )
+            ]),
+            Column(children: [
+              new NumberPicker.integer(
+                  initialValue: minutes,
+                  itemExtent: 60,
+                  listViewWidth: 150,
+                  minValue: 0,
+                  maxValue: 59,
+                  zeroPad: true,
+                  infiniteLoop: true,
+                  onChanged: (val) => setState(() {
+                        minutes = val.toInt();
+                      })),
+              Text(
+                "Minutes",
+                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+              )
+            ]),
+            Column(children: [
+              new NumberPicker.integer(
+                  initialValue: seconds,
+                  itemExtent: 60,
+                  listViewWidth: 150,
+                  minValue: 0,
+                  maxValue: 59,
+                  zeroPad: true,
+                  infiniteLoop: true,
+                  onChanged: (val) => setState(() {
+                        seconds = val.toInt();
+                      })),
+              Text(
+                "Seconds",
+                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+              )
+            ]),
+          ]);
+    }
   }
 }
 
