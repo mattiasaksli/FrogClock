@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'dart:io' as io;
 import 'package:flutter_blue/flutter_blue.dart';
+
 // For changing the language
 //import 'package:flutter_localizations/flutter_localizations.dart';
 //import 'package:flutter_cupertino_localizations/flutter_cupertino_localizations.dart';
@@ -12,88 +13,89 @@ const appName = 'FrogAlarm';
 const PrimaryColor = Colors.green;
 
 void main() {
-
   runApp(MaterialApp(
-      title: appName,
-      home: MyHomePage(),
-      theme: ThemeData(
-        primaryColor: PrimaryColor,
-      ),
-      supportedLocales: [
-        const Locale('en'), // English
-      ],
-    ));
+    title: appName,
+    home: PageViewController(),
+    theme: ThemeData(
+      primaryColor: PrimaryColor,
+    ),
+    supportedLocales: [
+      const Locale('en'), // English
+    ],
+  ));
 }
 
-void bluetoothSearch() {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
+class PageViewController extends StatelessWidget {
+  final pageController = PageController();
 
-  // Start scanning
-  flutterBlue.startScan(timeout: Duration(seconds: 4));
-
-// Listen to scan results
-  var subscription = flutterBlue.scanResults.listen((scanResult) {
-    for(ScanResult result in scanResult) {
-      var device = result.device;
-      if(device.name == "FrogAlarm") {
-        device.connect();
-        print('${device.name} connected!');
-        flutterBlue.stopScan();
-        break;
-      }
-    }
-  });
-
-// Stop scanning
-  flutterBlue.stopScan();
-}
-
-class MyHomePage extends StatefulWidget {
   @override
-  MyHomePageState createState() => MyHomePageState();
+  Widget build(BuildContext context) {
+    return PageView(
+      controller: pageController,
+      children: <Widget>[AlarmStateful(), TimerStateful(), DebugStateful()],
+    );
+  }
 }
 
-class MyHomePageState extends State<MyHomePage> {
+class AlarmStateful extends StatefulWidget {
+  @override
+  AlarmStateless createState() => AlarmStateless();
+}
+
+class AlarmStateless extends State<AlarmStateful> {
   bool isSwitched = false;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
           appBar: AppBar(
-            /*bottom: TabBar(
+              /*bottom: TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.directions_car)),
                 Tab(icon: Icon(Icons.directions_transit)),
                 Tab(icon: Icon(Icons.directions_bike)),
               ],
             ),*/
-          ),
-          body: Center(
-            child: Container(
-              width: 200,
-              child: Column(
-                children: <Widget>[
-                  DateTimeForm(),
-                  Switch(
-                    value: isSwitched,
-                    onChanged: (value) {
-                      setState(() {
-                        isSwitched = value;
-                        print(isSwitched);
-                      });
-                    },
-                    activeTrackColor: Colors.lightGreenAccent,
-                    activeColor: Colors.green,
-                  ),
-                  RaisedButton(
-                    onPressed: () {
-                      bluetoothSearch();
-                    },
-                    child: const Text('Bluetooth search', style: TextStyle(fontSize: 20)),
-                  ),
-                ],
               ),
+          body: Container(
+            margin: EdgeInsets.fromLTRB(50, 50, 50, 50),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 100, 0, 50),
+                  child: Text(
+                    "frog will ring at",
+                    style: TextStyle(
+                        fontSize: 40,
+                        color: isSwitched
+                            ? Color.fromARGB(255, 0, 70, 0)
+                            : Color.fromARGB(255, 200, 200, 200)),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
+                  child: DateTimeForm(),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
+                  child: Transform.scale(
+                    scale: 4,
+                    child: Switch(
+                      value: isSwitched,
+                      onChanged: (value) {
+                        setState(() {
+                          isSwitched = value;
+                          print(isSwitched);
+                        });
+                      },
+                      activeTrackColor: Colors.lightGreenAccent,
+                      activeColor: Colors.green,
+                    ),
+                  ),
+                ),
+              ],
             ),
           )),
     );
@@ -107,41 +109,21 @@ class DateTimeForm extends StatefulWidget {
 
 class _DateTimeFormState extends State<DateTimeForm> {
   final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return BasicTimeField();
   }
 }
 
-class BasicDateField extends StatelessWidget {
-  final format = DateFormat("yyyy-MM-dd");
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('Basic date field (${format.pattern})'),
-      DateTimeField(
-        format: format,
-        onShowPicker: (context, currentValue) {
-          return showDatePicker(
-              context: context,
-              firstDate: DateTime(1900),
-              initialDate: currentValue ?? DateTime.now(),
-              lastDate: DateTime(2100));
-        },
-      ),
-    ]);
-  }
-}
-
 class BasicTimeField extends StatelessWidget {
   final format = DateFormat("hh:mm a");
+
   @override
   Widget build(BuildContext context) {
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Text('Basic time field (${format.pattern})'),
           DateTimeField(
             format: format,
             resetIcon: null,
@@ -158,205 +140,222 @@ class BasicTimeField extends StatelessWidget {
   }
 }
 
-class BasicDateTimeField extends StatelessWidget {
-  final format = DateFormat("yyyy-MM-dd HH:mm");
+class TimerStateful extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('Basic date & time field (${format.pattern})'),
-      DateTimeField(
-        format: format,
-        onShowPicker: (context, currentValue) async {
-          final date = await showDatePicker(
-              context: context,
-              firstDate: DateTime(1900),
-              initialDate: currentValue ?? DateTime.now(),
-              lastDate: DateTime(2100));
-          if (date != null) {
-            final time = await showTimePicker(
-              context: context,
-              initialTime:
-                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-            );
-            return DateTimeField.combine(date, time);
-          } else {
-            return currentValue;
-          }
-        },
-      ),
-    ]);
-  }
+  TimerStateless createState() => TimerStateless();
 }
 
-class IosStylePickers extends StatefulWidget {
-  @override
-  _IosStylePickersState createState() => _IosStylePickersState();
-}
-
-class _IosStylePickersState extends State<IosStylePickers> {
-  final format = DateFormat("yyyy-MM-dd HH:mm");
-  DateTime value;
+class TimerStateless extends State<TimerStateful> {
+  int hours = 0;
+  int minutes = 0;
+  int seconds = 0;
+  int totalSeconds = 0;
+  final _controllerH = TextEditingController();
+  final _controllerM = TextEditingController();
+  final _controllerS = TextEditingController();
+  String displayHours = "";
+  String displayMinutes = "";
+  String displaySeconds = "";
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('iOS style pickers (${format.pattern})'),
-      DateTimeField(
-        initialValue: value,
-        format: format,
-        onShowPicker: (context, currentValue) async {
-          await showCupertinoModalPopup(
-              context: context,
-              builder: (context) {
-                return CupertinoDatePicker(
-                  onDateTimeChanged: (DateTime date) {
-                    value = date;
-                  },
-                );
-              });
-          setState(() {});
-          return value;
-        },
-      ),
-    ]);
-  }
-}
-
-class ComplexDateTimeField extends StatefulWidget {
-  @override
-  _ComplexDateTimeFieldState createState() => _ComplexDateTimeFieldState();
-}
-
-class _ComplexDateTimeFieldState extends State<ComplexDateTimeField> {
-  final format = DateFormat("yyyy-MM-dd HH:mm");
-  final initialValue = DateTime.now();
-
-  bool autoValidate = false;
-  bool readOnly = true;
-  bool showResetIcon = true;
-  DateTime value = DateTime.now();
-  int changedCount = 0;
-  int savedCount = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('Complex date & time field (${format.pattern})'),
-      DateTimeField(
-        format: format,
-        onShowPicker: (context, currentValue) async {
-          final date = await showDatePicker(
-              context: context,
-              firstDate: DateTime(1900),
-              initialDate: currentValue ?? DateTime.now(),
-              lastDate: DateTime(2100));
-          if (date != null) {
-            final time = await showTimePicker(
-              context: context,
-              initialTime:
-                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-            );
-            return DateTimeField.combine(date, time);
-          } else {
-            return currentValue;
-          }
-        },
-        autovalidate: autoValidate,
-        validator: (date) => date == null ? 'Invalid date' : null,
-        initialValue: initialValue,
-        onChanged: (date) => setState(() {
-          value = date;
-          changedCount++;
-        }),
-        onSaved: (date) => setState(() {
-          value = date;
-          savedCount++;
-        }),
-        resetIcon: showResetIcon ? Icon(Icons.delete) : null,
-        readOnly: readOnly,
-        decoration: InputDecoration(
-            helperText: 'Changed: $changedCount, Saved: $savedCount, $value'),
-      ),
-      CheckboxListTile(
-        title: Text('autoValidate'),
-        value: autoValidate,
-        onChanged: (value) => setState(() => autoValidate = value),
-      ),
-      CheckboxListTile(
-        title: Text('readOnly'),
-        value: readOnly,
-        onChanged: (value) => setState(() => readOnly = value),
-      ),
-      CheckboxListTile(
-        title: Text('showResetIcon'),
-        value: showResetIcon,
-        onChanged: (value) => setState(() => showResetIcon = value),
-      ),
-    ]);
-  }
-}
-
-class Clock24Example extends StatelessWidget {
-  final format = DateFormat("HH:mm");
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('24 hour clock'),
-      DateTimeField(
-        format: format,
-        onShowPicker: (context, currentValue) async {
-          final time = await showTimePicker(
-            context: context,
-            initialTime: TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-            builder: (context, child) => MediaQuery(
-                data: MediaQuery.of(context)
-                    .copyWith(alwaysUse24HourFormat: true),
-                child: child),
-          );
-          return DateTimeField.convert(time);
-        },
-      ),
-    ]);
-  }
-}
-
-class LocaleExample extends StatelessWidget {
-  final format = DateFormat("yyyy-MM-dd HH:mm");
-  @override
-  Widget build(BuildContext context) {
-    return Column(children: <Widget>[
-      Text('Changing the pickers\' language'),
-      DateTimeField(
-        format: format,
-        onShowPicker: (context, currentValue) async {
-          final date = await showDatePicker(
-            context: context,
-            firstDate: DateTime(1900),
-            initialDate: DateTime.now(),
-            lastDate: DateTime(2100),
-            builder: (context, child) => Localizations.override(
-              context: context,
-              locale: Locale('zh'),
-              child: child,
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Timer"),
+          ),
+          body: new Container(
+            padding: const EdgeInsets.all(90),
+            alignment: Alignment.center,
+            child: new Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  //margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Text(
+                    "$displayHours : $displayMinutes : $displaySeconds",
+                    style: TextStyle(fontSize: 40),
+                  ),
+                ),
+                Expanded(
+                  child: TextFormField(
+                      onChanged: (String newValue) {
+                        setState(() {
+                          hours = int.parse(newValue);
+                          displayHours = (hours < 10) ? "0$hours" : "$hours";
+                        });
+                      },
+                      controller: _controllerH,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly,
+                        BlacklistingTextInputFormatter(new RegExp(
+                            "[2-9][4-9]|[0-9][0-9][0-9]|[3-9][0-9]")),
+                      ],
+                      decoration: InputDecoration(
+                        labelText: "Hours",
+                        border: OutlineInputBorder(),
+                      )),
+                ),
+                Expanded(
+                  //margin: const EdgeInsets.fromLTRB(0, 50, 0, 50),
+                  child: TextFormField(
+                      onChanged: (String newValue) {
+                        setState(() {
+                          minutes = int.parse(newValue);
+                          displayMinutes =
+                              (minutes < 10) ? "0$minutes" : "$minutes";
+                        });
+                      },
+                      controller: _controllerM,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly,
+                        BlacklistingTextInputFormatter(
+                            new RegExp("[6-9][0-9]|[0-9][0-9][0-9]"))
+                      ],
+                      decoration: InputDecoration(
+                        labelText: "Minutes",
+                        border: OutlineInputBorder(),
+                      )),
+                ),
+                Expanded(
+                  child: TextFormField(
+                      onChanged: (String newValue) {
+                        setState(() {
+                          seconds = int.parse(newValue);
+                          displaySeconds =
+                              (hours < 10) ? "0$seconds" : "$seconds";
+                        });
+                      },
+                      controller: _controllerS,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        WhitelistingTextInputFormatter.digitsOnly,
+                        BlacklistingTextInputFormatter(
+                            new RegExp("[6-9][0-9]|[0-9][0-9][0-9]"))
+                      ],
+                      decoration: InputDecoration(
+                        labelText: "Seconds",
+                        border: OutlineInputBorder(),
+                      )),
+                ),
+                Container(
+                  //margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: RaisedButton(
+                    child: Text("Start timer"),
+                    onPressed: () {
+                      setState(() {
+                        startTimer();
+                        _controllerH.text = "";
+                        _controllerM.text = "";
+                        _controllerS.text = "";
+                      });
+                    },
+                  ),
+                ),
+              ],
             ),
-          );
-          if (date != null) {
-            final time = await showTimePicker(
-              context: context,
-              initialTime:
-                  TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-              builder: (context, child) => Localizations.override(
-                context: context,
-                locale: Locale('zh'),
-                child: child,
-              ),
-            );
-            return DateTimeField.combine(date, time);
-          } else {
-            return currentValue;
-          }
-        },
-      ),
-    ]);
+          ),
+        ));
   }
+
+  void initState() {
+    _controllerH.addListener(() {
+      final text = _controllerH.text.toLowerCase();
+      _controllerH.value = _controllerH.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    _controllerM.addListener(() {
+      final text = _controllerM.text.toLowerCase();
+      _controllerM.value = _controllerM.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    _controllerS.addListener(() {
+      final text = _controllerS.text.toLowerCase();
+      _controllerS.value = _controllerS.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    super.initState();
+
+    displayHours = (hours < 10) ? "0$hours" : "$hours";
+    displayMinutes = (minutes < 10) ? "0$minutes" : "$minutes";
+    displaySeconds = (hours < 10) ? "0$seconds" : "$seconds";
+  }
+
+  void dispose() {
+    _controllerH.dispose();
+    _controllerM.dispose();
+    _controllerS.dispose();
+    super.dispose();
+  }
+
+  void startTimer() {
+    totalSeconds = seconds + minutes * 60 + hours * 60 * 60;
+    print("$totalSeconds seconds");
+  }
+}
+
+class DebugStateful extends StatefulWidget {
+  @override
+  DebugState createState() => DebugState();
+}
+
+class DebugState extends State<DebugStateful> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
+        child: Column(
+          children: <Widget>[
+            RaisedButton(
+              onPressed: () {
+                bluetoothSearch();
+              },
+              child: const Text('Bluetooth search',
+                  style: TextStyle(fontSize: 20)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+void bluetoothSearch() {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
+  // Start scanning
+  flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+// Listen to scan results
+  var subscription = flutterBlue.scanResults.listen((scanResult) {
+    for (ScanResult result in scanResult) {
+      var device = result.device;
+      if (device.name == "FrogAlarm") {
+        device.connect();
+        print('${device.name} connected!');
+        flutterBlue.stopScan();
+        break;
+      }
+    }
+  });
+
+// Stop scanning
+  flutterBlue.stopScan();
 }
