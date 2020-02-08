@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'dart:convert';
+import 'package:intl/intl.dart';
 
 const appName = 'FrogAlarm';
-const PrimaryColor = Colors.green;
+const PrimaryColor = Colors.lightGreen;
 var thefrog;
 
 void main() {
@@ -36,10 +34,10 @@ class PageViewController extends StatelessWidget {
 
 class AlarmStateful extends StatefulWidget {
   @override
-  AlarmStateless createState() => AlarmStateless();
+  AlarmState createState() => AlarmState();
 }
 
-class AlarmStateless extends State<AlarmStateful> {
+class AlarmState extends State<AlarmStateful> {
   bool isSwitched = false;
 
   @override
@@ -104,11 +102,11 @@ class AlarmStateless extends State<AlarmStateful> {
     List<BluetoothService> services = await thefrog.discoverServices();
     services.forEach((service) async {
       var characteristics = service.characteristics;
-      for(BluetoothCharacteristic c in characteristics) {
+      for (BluetoothCharacteristic c in characteristics) {
         print(c.uuid);
-        if(c.uuid.toString() == "00001990-0000-1000-8000-00805f9b34fb") {
+        if (c.uuid.toString() == "00001990-0000-1000-8000-00805f9b34fb") {
           print("uuid mathc!");
-          await c.write([0xE8,0x03]);
+          await c.write([0xE8, 0x03]);
           print("Delay sent!");
         }
       }
@@ -162,36 +160,44 @@ class _DateTimeFormState extends State<DateTimeForm> {
   }
 }
 
-class BasicTimeField extends StatelessWidget {
-  final format = DateFormat("hh:mm a");
+class BasicTimeField extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return BasicTimeFieldState();
+  }
+}
+
+class BasicTimeFieldState extends State<BasicTimeField> {
+  final format = DateFormat("HH:mm");
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          DateTimeField(
-            format: format,
-            resetIcon: null,
-            onShowPicker: (context, currentValue) async {
-              final time = await showTimePicker(
-                context: context,
-                initialTime:
-                    TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-              );
-              return DateTimeField.convert(time);
-            },
-          ),
-        ]);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
+    var currentValue = TimeOfDay.now();
+    return Center(
+        child: Transform.scale(
+            scale: 8,
+            child: GestureDetector(
+                onTap: () async {
+                  print("Trying to opena di clocka");
+                  currentValue = await showTimePicker(
+                    context: context,
+                    initialTime:
+                        currentValue ?? TimeOfDay.fromDateTime(DateTime.now()),
+                  );
+                },
+                child: Text(localizations.formatTimeOfDay(currentValue,
+                    alwaysUse24HourFormat: true)))));
   }
 }
 
 class TimerStateful extends StatefulWidget {
   @override
-  TimerStateless createState() => TimerStateless();
+  TimerState createState() => TimerState();
 }
 
-class TimerStateless extends State<TimerStateful> {
+class TimerState extends State<TimerStateful> {
   int hours = 0;
   int minutes = 0;
   int seconds = 0;
@@ -369,7 +375,6 @@ class DebugState extends State<DebugStateful> {
         margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
         child: Column(
           children: <Widget>[
-
             Text("Connection: ${thefrog}"),
             RaisedButton(
               onPressed: () {
