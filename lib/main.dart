@@ -35,7 +35,12 @@ void bluetoothSearch() {
   var subscription = flutterBlue.scanResults.listen((scanResult) {
     for(ScanResult result in scanResult) {
       var device = result.device;
-      print('${device.name} found! rssi: ${result.rssi}');
+      if(device.name == "FrogAlarm") {
+        device.connect();
+        print('${device.name} connected!');
+        flutterBlue.stopScan();
+        break;
+      }
     }
   });
 
