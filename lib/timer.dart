@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class TimerStateful extends StatefulWidget {
   @override
@@ -26,88 +27,81 @@ class TimerStateless extends State<TimerStateful> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-          appBar: AppBar(
-            title: Text("Timer"),
-          ),
-          body: new Container(
-            padding: const EdgeInsets.all(90),
-            alignment: Alignment.center,
-            child: new Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  //margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  child: BlinkingTextAnimation(),
-                ),
-                Expanded(
-                  child: TextFormField(
-                      onChanged: (String newValue) {
-                        setState(() {
-                          hours = int.parse(newValue);
-                          displayHours = (hours < 10) ? "0$hours" : "$hours";
-                        });
-                      },
-                      controller: _controllerH,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter(new RegExp(
-                            "[2-9][4-9]|[0-9][0-9][0-9]|[3-9][0-9]")),
-                      ],
-                      decoration: InputDecoration(
-                        labelText: "Hours",
-                        border: OutlineInputBorder(),
-                      )),
-                ),
-                Expanded(
-                  //margin: const EdgeInsets.fromLTRB(0, 50, 0, 50),
-                  child: TextFormField(
-                      onChanged: (String newValue) {
-                        setState(() {
-                          minutes = int.parse(newValue);
-                          displayMinutes =
-                          (minutes < 10) ? "0$minutes" : "$minutes";
-                        });
-                      },
-                      controller: _controllerM,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter(
-                            new RegExp("[6-9][0-9]|[0-9][0-9][0-9]"))
-                      ],
-                      decoration: InputDecoration(
-                        labelText: "Minutes",
-                        border: OutlineInputBorder(),
-                      )),
-                ),
-                Expanded(
-                  child: TextFormField(
-                      onChanged: (String newValue) {
-                        setState(() {
-                          seconds = int.parse(newValue);
-                          displaySeconds =
-                          (seconds < 10) ? "0$seconds" : "$seconds";
-                        });
-                      },
-                      controller: _controllerS,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        WhitelistingTextInputFormatter.digitsOnly,
-                        BlacklistingTextInputFormatter(
-                            new RegExp("[6-9][0-9]|[0-9][0-9][0-9]"))
-                      ],
-                      decoration: InputDecoration(
-                        labelText: "Seconds",
-                        border: OutlineInputBorder(),
-                      )),
-                ),
-                Container(
-                  //margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: RaisedButton(
+            appBar: AppBar(
+              title: Text("Timer"),
+            ),
+            body: new Container(
+              padding: const EdgeInsets.all(90),
+              alignment: Alignment.center,
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                      Widget>[
+                    Column(children: [
+                      new NumberPicker.integer(
+                          initialValue: hours,
+                          itemExtent: 60,
+                          listViewWidth: 150,
+                          minValue: 0,
+                          maxValue: 23,
+                          zeroPad: true,
+                          infiniteLoop: true,
+                          onChanged: (val) => setState(() {
+                                hours = val.toInt();
+                              })),
+                      Text(
+                        "Hours",
+                        style:
+                            TextStyle(color: theme.disabledColor, fontSize: 10),
+                      )
+                    ]),
+                    Column(children: [
+                      new NumberPicker.integer(
+                          initialValue: minutes,
+                          itemExtent: 60,
+                          listViewWidth: 150,
+                          minValue: 0,
+                          maxValue: 59,
+                          zeroPad: true,
+                          infiniteLoop: true,
+                          onChanged: (val) => setState(() {
+                                minutes = val.toInt();
+                              })),
+                      Text(
+                        "Minutes",
+                        style:
+                            TextStyle(color: theme.disabledColor, fontSize: 10),
+                      )
+                    ]),
+                    Column(children: [
+                      new NumberPicker.integer(
+                          initialValue: seconds,
+                          itemExtent: 60,
+                          listViewWidth: 150,
+                          minValue: 0,
+                          maxValue: 59,
+                          zeroPad: true,
+                          infiniteLoop: true,
+                          onChanged: (val) => setState(() {
+                                seconds = val.toInt();
+                              })),
+                      Text(
+                        "Seconds",
+                        style:
+                            TextStyle(color: theme.disabledColor, fontSize: 10),
+                      )
+                    ]),
+                  ]),
+                  Expanded(
+                    //margin: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: BlinkingTextAnimation(),
+                  ),
+                  RaisedButton(
                     child: Text("$timerButtonText"),
                     onPressed: () {
                       setState(() {
@@ -119,11 +113,9 @@ class TimerStateless extends State<TimerStateful> {
                       });
                     },
                   ),
-                ),
-              ],
-            ),
-          ),
-        ));
+                ],
+              ),
+            )));
   }
 
   void initState() {
@@ -132,7 +124,7 @@ class TimerStateless extends State<TimerStateful> {
       _controllerH.value = _controllerH.value.copyWith(
         text: text,
         selection:
-        TextSelection(baseOffset: text.length, extentOffset: text.length),
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
         composing: TextRange.empty,
       );
     });
@@ -141,7 +133,7 @@ class TimerStateless extends State<TimerStateful> {
       _controllerM.value = _controllerM.value.copyWith(
         text: text,
         selection:
-        TextSelection(baseOffset: text.length, extentOffset: text.length),
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
         composing: TextRange.empty,
       );
     });
@@ -150,7 +142,7 @@ class TimerStateless extends State<TimerStateful> {
       _controllerS.value = _controllerS.value.copyWith(
         text: text,
         selection:
-        TextSelection(baseOffset: text.length, extentOffset: text.length),
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
         composing: TextRange.empty,
       );
     });
@@ -238,7 +230,7 @@ class _BlinkingAnimationState extends State<BlinkingTextAnimation>
         duration: const Duration(milliseconds: 500), vsync: this);
 
     final CurvedAnimation curve =
-    CurvedAnimation(parent: animController, curve: Curves.linear);
+        CurvedAnimation(parent: animController, curve: Curves.linear);
 
     animation =
         ColorTween(begin: Colors.black, end: Colors.white).animate(curve);
