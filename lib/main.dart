@@ -1,17 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_app/timer.dart';
 import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-
-import 'dart:convert';
 
 import 'debug.dart';
 
 const appName = 'FrogAlarm';
-const PrimaryColor = Colors.lightGreen;
 
 void main() => runApp(MainApp());
 
@@ -22,8 +15,12 @@ class MainApp extends StatelessWidget {
       title: appName,
       home: TabsStateful(),
       theme: ThemeData(
-        primaryColor: PrimaryColor,
-      ),
+        primaryColor: Color.fromARGB(0xFF, 0x3E, 0x27, 0x23),
+        primaryColorLight: Color.fromARGB(0xFF, 0x6A, 0x4F, 0x4B),
+        primaryColorDark: Color.fromARGB(0xFF, 0x1B, 0x00, 0x00),
+        accentColor: Color.fromARGB(0xFF, 0x64, 0xDD, 0x17),
+      textTheme: TextTheme(
+            body1: TextStyle(fontSize: 30), headline: TextStyle(fontSize: 60))),
       supportedLocales: [
         const Locale('en'), // English
       ],
@@ -114,7 +111,7 @@ class AlarmState extends State<AlarmStateful> {
             Container(
               margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
               child: Transform.scale(
-                scale: 4,
+                scale: 3,
                 child: Switch(
                   value: isSwitched,
                   onChanged: (value) {
@@ -177,6 +174,7 @@ class BasicTimeFieldState extends State<BasicTimeField> {
                   );
                 },
                 child: Text(localizations.formatTimeOfDay(currentValue,
-                    alwaysUse24HourFormat: true)))));
+                    alwaysUse24HourFormat: true),
+                style: TextStyle(fontSize: 13)))));
   }
 }
