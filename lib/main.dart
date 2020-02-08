@@ -11,7 +11,7 @@ import 'dart:convert';
 import 'debug.dart';
 
 const appName = 'FrogAlarm';
-const PrimaryColor = Colors.green;
+const PrimaryColor = Colors.lightGreen;
 
 void main() {
   runApp(MaterialApp(
@@ -40,10 +40,10 @@ class PageViewController extends StatelessWidget {
 
 class AlarmStateful extends StatefulWidget {
   @override
-  AlarmStateless createState() => AlarmStateless();
+  AlarmState createState() => AlarmState();
 }
 
-class AlarmStateless extends State<AlarmStateful> {
+class AlarmState extends State<AlarmStateful> {
   bool isSwitched = false;
 
   @override
@@ -117,26 +117,34 @@ class _DateTimeFormState extends State<DateTimeForm> {
   }
 }
 
-class BasicTimeField extends StatelessWidget {
-  final format = DateFormat("hh:mm a");
+class BasicTimeField extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return BasicTimeFieldState();
+  }
+}
+
+class BasicTimeFieldState extends State<BasicTimeField> {
+  final format = DateFormat("HH:mm");
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          DateTimeField(
-            format: format,
-            resetIcon: null,
-            onShowPicker: (context, currentValue) async {
-              final time = await showTimePicker(
-                context: context,
-                initialTime:
-                    TimeOfDay.fromDateTime(currentValue ?? DateTime.now()),
-              );
-              return DateTimeField.convert(time);
-            },
-          ),
-        ]);
+    final MaterialLocalizations localizations =
+        MaterialLocalizations.of(context);
+    var currentValue = TimeOfDay.now();
+    return Center(
+        child: Transform.scale(
+            scale: 8,
+            child: GestureDetector(
+                onTap: () async {
+                  print("Trying to opena di clocka");
+                  currentValue = await showTimePicker(
+                    context: context,
+                    initialTime:
+                        currentValue ?? TimeOfDay.fromDateTime(DateTime.now()),
+                  );
+                },
+                child: Text(localizations.formatTimeOfDay(currentValue,
+                    alwaysUse24HourFormat: true)))));
   }
 }
