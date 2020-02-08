@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:bluetooth/bluetooth.dart';
 import 'dart:io' as io;
+import 'package:flutter_blue/flutter_blue.dart';
 // For changing the language
 //import 'package:flutter_localizations/flutter_localizations.dart';
 //import 'package:flutter_cupertino_localizations/flutter_cupertino_localizations.dart';
@@ -11,10 +11,7 @@ import 'dart:io' as io;
 const appName = 'FrogAlarm';
 const PrimaryColor = Colors.green;
 
-FlutterBlue flutterBlue = FlutterBlue.instance;
-
 void main() {
-  FlutterBlue flutterBlue = FlutterBlue.instance;
 
   runApp(MaterialApp(
       title: appName,
@@ -29,19 +26,21 @@ void main() {
 }
 
 void bluetoothSearch() {
-  /// Start scanning
-  var scanSubscription = flutterBlue.scan().listen((scanResult) {
-    var deviceConnection = flutterBlue.connect(scanResult.device).listen((s) {
-      if(s == BluetoothDeviceState.connected) {
-        io.stderr.writeln('print me');
-      }
-    });
+  FlutterBlue flutterBlue = FlutterBlue.instance;
 
-    deviceConnection.cancel();
+  // Start scanning
+  flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+// Listen to scan results
+  var subscription = flutterBlue.scanResults.listen((scanResult) {
+    for(ScanResult result in scanResult) {
+      var device = result.device;
+      print('${device.name} found! rssi: ${result.rssi}');
+    }
   });
 
-  /// Stop scanning
-  scanSubscription.cancel();
+// Stop scanning
+  flutterBlue.stopScan();
 }
 
 class MyHomePage extends StatefulWidget {
