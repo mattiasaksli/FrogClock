@@ -32,6 +32,11 @@ class DebugState extends State<DebugStateful> {
   }
 }
 
+List<int> converter(hours, minutes, seconds) {
+  var milliseconds = (hours * 3600 + minutes * 60 + seconds)*1000;
+  return [milliseconds & 0xFF, (milliseconds >> 4) & 0xFF];
+}
+
 void onFrogFound(device) async {
   await device.connect();
   print('${thefrog.name} connected!');
@@ -40,9 +45,9 @@ void onFrogFound(device) async {
     var characteristics = service.characteristics;
     for (BluetoothCharacteristic c in characteristics) {
       print(c.uuid);
-      if (c.uuid.toString() == "00001990-0000-1000-8000-00805f9b34fb") {
-        print("uuid mathc!");
-        await c.write([0xE8, 0x03]);
+      if (c.uuid == new Guid("00001990-0000-1000-8000-00805f9b34fb")) { ///WILL THIS LINE WORK? THE LAST WORKING ONE WAS: c.uuid.toString() == "00001990-0000-1000-8000-00805f9b34fb"
+        print("Uuid match!");
+        await c.write(converter(0, 0, 1));
         print("Delay sent!");
       }
     }
