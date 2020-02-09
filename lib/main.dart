@@ -94,7 +94,7 @@ class AlarmState extends State<AlarmStateful> {
         child: Column(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.fromLTRB(0, 100, 0, 50),
+              margin: EdgeInsets.fromLTRB(0, 80, 0, 50),
               child: Text(
                 "frog will ring at",
                 style: TextStyle(

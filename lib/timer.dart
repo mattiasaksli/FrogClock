@@ -31,43 +31,40 @@ class TimerState extends State<TimerStateful> {
     return DefaultTabController(
         length: 2,
         child: Scaffold(
-            appBar: AppBar(
-              title: Text("Timer"),
-            ),
             body: new Container(
-              margin: EdgeInsets.fromLTRB(0, 150, 0, 50),
-              alignment: Alignment.center,
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    "frog will ring in",
-                    style: TextStyle(
-                        fontSize: 40,
-                        color: timerActive
-                            ? Color.fromARGB(255, 0, 70, 0)
-                            : Color.fromARGB(255, 200, 200, 200)),
-                  ),
-                  clocka(context),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                      child: Transform.scale(
-                          scale: 1.2,
-                          child: FloatingActionButton(
-                            child: Icon(buttonIcon, color: Colors.white),
-                            onPressed: () {
-                              setState(() {
-                                if (!timerActive) {
-                                  startTimer();
-                                } else {
-                                  stopTimer();
-                                }
-                              });
-                            },
-                          ))),
-                ],
+          margin: EdgeInsets.fromLTRB(0, 130, 0, 50),
+          alignment: Alignment.center,
+          child: new Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "frog will ring in",
+                style: TextStyle(
+                    fontSize: 40,
+                    color: timerActive
+                        ? Color.fromARGB(255, 0, 70, 0)
+                        : Color.fromARGB(255, 200, 200, 200)),
               ),
-            )));
+              clocka(context),
+              Container(
+                  margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: Transform.scale(
+                      scale: 1.2,
+                      child: FloatingActionButton(
+                        child: Icon(buttonIcon, color: Colors.white),
+                        onPressed: () {
+                          setState(() {
+                            if (!timerActive) {
+                              startTimer();
+                            } else {
+                              stopTimer();
+                            }
+                          });
+                        },
+                      ))),
+            ],
+          ),
+        )));
   }
 
   void initState() {
@@ -176,8 +173,7 @@ class TimerState extends State<TimerStateful> {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-                child: Column(children: [
+            Column(children: [
               new NumberPicker.integer(
                   initialValue: hours,
                   itemExtent: pickerItemHeight,
@@ -193,10 +189,9 @@ class TimerState extends State<TimerStateful> {
                 "Hours",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ])),
+            ]),
             Text(":", style: TextStyle(fontSize: 30)),
-            Expanded(
-                child: Column(children: [
+            Column(children: [
               new NumberPicker.integer(
                   initialValue: minutes,
                   itemExtent: pickerItemHeight,
@@ -212,10 +207,9 @@ class TimerState extends State<TimerStateful> {
                 "Minutes",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ])),
+            ]),
             Text(":", style: TextStyle(fontSize: 30)),
-            Expanded(
-                child: Column(children: [
+            Column(children: [
               new NumberPicker.integer(
                   initialValue: seconds,
                   itemExtent: pickerItemHeight,
@@ -231,7 +225,7 @@ class TimerState extends State<TimerStateful> {
                 "Seconds",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ])),
+            ]),
           ]);
     }
   }
