@@ -2,18 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'debug.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class TimerStateful extends StatefulWidget {
   @override
-  TimerStateless createState() => TimerStateless();
+  TimerState createState() => TimerState();
 }
 
 String displayHours = "";
 String displayMinutes = "";
 String displaySeconds = "";
 
-class TimerStateless extends State<TimerStateful> {
+class TimerState extends State<TimerStateful> {
   int hours = 0;
   int minutes = 0;
   int seconds = 0;
@@ -123,6 +124,7 @@ class TimerStateless extends State<TimerStateful> {
     });
 
     totalSeconds = seconds + minutes * 60 + hours * 60 * 60;
+    setFrogTimer(hours, minutes, seconds);
     t = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (totalSeconds != 0) {
@@ -174,7 +176,8 @@ class TimerStateless extends State<TimerStateful> {
       return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Column(children: [
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: hours,
                   itemExtent: pickerItemHeight,
@@ -190,9 +193,10 @@ class TimerStateless extends State<TimerStateful> {
                 "Hours",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
+            ])),
             Text(":", style: TextStyle(fontSize: 30)),
-            Column(children: [
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: minutes,
                   itemExtent: pickerItemHeight,
@@ -208,9 +212,10 @@ class TimerStateless extends State<TimerStateful> {
                 "Minutes",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
+            ])),
             Text(":", style: TextStyle(fontSize: 30)),
-            Column(children: [
+            Expanded(
+                child: Column(children: [
               new NumberPicker.integer(
                   initialValue: seconds,
                   itemExtent: pickerItemHeight,
@@ -226,7 +231,7 @@ class TimerStateless extends State<TimerStateful> {
                 "Seconds",
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
-            ]),
+            ])),
           ]);
     }
   }

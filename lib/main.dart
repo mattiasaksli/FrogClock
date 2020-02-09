@@ -6,31 +6,74 @@ import 'debug.dart';
 
 const appName = 'FrogAlarm';
 
-void main() {
-  runApp(MaterialApp(
-    title: appName,
-    home: PageViewController(),
-    theme: ThemeData(
+void main() => runApp(MainApp());
+
+class MainApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: appName,
+      home: TabsStateful(),
+      theme: ThemeData(
         primaryColor: Color.fromARGB(0xFF, 0x3E, 0x27, 0x23),
         primaryColorLight: Color.fromARGB(0xFF, 0x6A, 0x4F, 0x4B),
         primaryColorDark: Color.fromARGB(0xFF, 0x1B, 0x00, 0x00),
         accentColor: Color.fromARGB(0xFF, 0x64, 0xDD, 0x17),
-        textTheme: TextTheme(
+      textTheme: TextTheme(
             body1: TextStyle(fontSize: 30), headline: TextStyle(fontSize: 60))),
-    supportedLocales: [
-      const Locale('en'), // English
-    ],
-  ));
+      supportedLocales: [
+        const Locale('en'), // English
+      ],
+    );
+  }
 }
 
-class PageViewController extends StatelessWidget {
-  final pageController = PageController();
+//class PageViewController extends StatelessWidget {
+//  final pageController = PageController();
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    return PageView(
+//      controller: pageController,
+//      children: <Widget>[AlarmStateful(), TimerStateful(), DebugStateful()],
+//    );
+//  }
+//}
 
+class TabsStateful extends StatefulWidget {
+  @override
+  TabsState createState() => TabsState();
+}
+
+class TabsState extends State<TabsStateful> {
   @override
   Widget build(BuildContext context) {
-    return PageView(
-      controller: pageController,
-      children: <Widget>[AlarmStateful(), TimerStateful(), DebugStateful()],
+    return DefaultTabController(
+      initialIndex: 1,
+      length: 4,
+      child: Scaffold(
+          appBar: AppBar(
+            bottom: TabBar(
+              isScrollable: false,
+              tabs: [
+                Tab(icon: Icon(Icons.device_unknown,
+                  color: Color.fromARGB(0, 0, 0, 0),)),
+                Tab(icon: Icon(Icons.access_alarms)),
+                Tab(icon: Icon(Icons.timer)),
+                Tab(icon: Icon(Icons.device_unknown,
+                color: Color.fromARGB(0, 0, 0, 0),))
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: <Widget>[
+              DebugStateful(),
+              AlarmStateful(),
+              TimerStateful(),
+              DebugStateful()
+            ],
+          )
+      ),
     );
   }
 }
@@ -45,57 +88,46 @@ class AlarmState extends State<AlarmStateful> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-          appBar: AppBar(
-              /*bottom: TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.directions_car)),
-                Tab(icon: Icon(Icons.directions_transit)),
-                Tab(icon: Icon(Icons.directions_bike)),
-              ],
-            ),*/
+    return Scaffold(
+      body: Container(
+        margin: EdgeInsets.fromLTRB(50, 50, 50, 50),
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 100, 0, 50),
+              child: Text(
+                "frog will ring at",
+                style: TextStyle(
+                    fontSize: 40,
+                    color: isSwitched
+                        ? Color.fromARGB(255, 0, 70, 0)
+                        : Color.fromARGB(255, 200, 200, 200)),
               ),
-          body: Container(
-            margin: EdgeInsets.fromLTRB(50, 50, 50, 50),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 100, 0, 50),
-                  child: Text(
-                    "frog will ring at",
-                    style: TextStyle(
-                        fontSize: 40,
-                        color: isSwitched
-                            ? Color.fromARGB(255, 0, 70, 0)
-                            : Color.fromARGB(255, 200, 200, 200)),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
-                  child: DateTimeForm(),
-                ),
-                Container(
-                  margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
-                  child: Transform.scale(
-                    scale: 2.5,
-                    child: Switch(
-                      value: isSwitched,
-                      onChanged: (value) {
-                        setState(() {
-                          isSwitched = value;
-                          print(isSwitched);
-                        });
-                      },
-                      activeTrackColor: Colors.lightGreenAccent,
-                      activeColor: Colors.green,
-                    ),
-                  ),
-                ),
-              ],
             ),
-          )),
+            Container(
+              margin: EdgeInsets.fromLTRB(100, 10, 100, 10),
+              child: DateTimeForm(),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
+              child: Transform.scale(
+                scale: 2.5,
+                child: Switch(
+                  value: isSwitched,
+                  onChanged: (value) {
+                    setState(() {
+                      isSwitched = value;
+                      print(isSwitched);
+                    });
+                  },
+                  activeTrackColor: Colors.lightGreenAccent,
+                  activeColor: Colors.green,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
