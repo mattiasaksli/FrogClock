@@ -96,7 +96,7 @@ class AlarmState extends State<AlarmStateful> {
             Container(
               margin: EdgeInsets.fromLTRB(0, 80, 0, 50),
               child: Text(
-                "frog will ring at",
+                "Frog will ring at",
                 style: TextStyle(
                     fontSize: 40,
                     color: isSwitched
