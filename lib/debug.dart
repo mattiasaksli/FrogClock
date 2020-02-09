@@ -89,7 +89,7 @@ class DebugState extends State<DebugStateful> {
 
 List<int> converter(hours, minutes, seconds) {
   print([hours, minutes, seconds]);
-  var milliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
+  var milliseconds = (hours * 3600 + minutes * 60 + seconds);
   List<int> signal = [milliseconds & 0xFF, (milliseconds >> 8) & 0xFF];
   print(signal);
   return signal;
