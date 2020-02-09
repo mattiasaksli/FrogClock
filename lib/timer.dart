@@ -59,6 +59,7 @@ class TimerState extends State<TimerStateful> {
                       child: FloatingActionButton(
                         child: Icon(buttonIcon, color: Colors.white),
                         onPressed: () {
+                          setFrogTimer(hours, minutes, seconds + 1);
                           setState(() {
                             displayHours = (hours < 10) ? "0$hours" : "$hours";
                             displayMinutes =
