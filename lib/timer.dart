@@ -34,24 +34,36 @@ class TimerStateless extends State<TimerStateful> {
               title: Text("Timer"),
             ),
             body: new Container(
-              padding: const EdgeInsets.all(90),
+              margin: EdgeInsets.fromLTRB(0, 150, 0, 50),
               alignment: Alignment.center,
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  clocka(context),
-                  FloatingActionButton(
-                    child: Icon(buttonIcon, color: Colors.white),
-                    onPressed: () {
-                      setState(() {
-                        if (!timerActive) {
-                          startTimer();
-                        } else {
-                          stopTimer();
-                        }
-                      });
-                    },
+                  Text(
+                    "frog will ring in",
+                    style: TextStyle(
+                        fontSize: 40,
+                        color: timerActive
+                            ? Color.fromARGB(255, 0, 70, 0)
+                            : Color.fromARGB(255, 200, 200, 200)),
                   ),
+                  clocka(context),
+                  Container(
+                      margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                      child: Transform.scale(
+                          scale: 1.2,
+                          child: FloatingActionButton(
+                            child: Icon(buttonIcon, color: Colors.white),
+                            onPressed: () {
+                              setState(() {
+                                if (!timerActive) {
+                                  startTimer();
+                                } else {
+                                  stopTimer();
+                                }
+                              });
+                            },
+                          ))),
                 ],
               ),
             )));
@@ -153,6 +165,9 @@ class TimerStateless extends State<TimerStateful> {
   clocka(context) {
     var theme = Theme.of(context);
 
+    double pickerItemHeight = 60;
+    double pickerWidth = 80;
+
     if (timerActive) {
       return BlinkingTextAnimation();
     } else {
@@ -162,8 +177,8 @@ class TimerStateless extends State<TimerStateful> {
             Column(children: [
               new NumberPicker.integer(
                   initialValue: hours,
-                  itemExtent: 60,
-                  listViewWidth: 150,
+                  itemExtent: pickerItemHeight,
+                  listViewWidth: pickerWidth,
                   minValue: 0,
                   maxValue: 23,
                   zeroPad: true,
@@ -176,11 +191,12 @@ class TimerStateless extends State<TimerStateful> {
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
             ]),
+            Text(":", style: TextStyle(fontSize: 30)),
             Column(children: [
               new NumberPicker.integer(
                   initialValue: minutes,
-                  itemExtent: 60,
-                  listViewWidth: 150,
+                  itemExtent: pickerItemHeight,
+                  listViewWidth: pickerWidth,
                   minValue: 0,
                   maxValue: 59,
                   zeroPad: true,
@@ -193,11 +209,12 @@ class TimerStateless extends State<TimerStateful> {
                 style: TextStyle(color: theme.disabledColor, fontSize: 10),
               )
             ]),
+            Text(":", style: TextStyle(fontSize: 30)),
             Column(children: [
               new NumberPicker.integer(
                   initialValue: seconds,
-                  itemExtent: 60,
-                  listViewWidth: 150,
+                  itemExtent: pickerItemHeight,
+                  listViewWidth: pickerWidth,
                   minValue: 0,
                   maxValue: 59,
                   zeroPad: true,

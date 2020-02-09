@@ -79,7 +79,7 @@ class AlarmState extends State<AlarmStateful> {
                 Container(
                   margin: EdgeInsets.fromLTRB(0, 100, 0, 0),
                   child: Transform.scale(
-                    scale: 3,
+                    scale: 2.5,
                     child: Switch(
                       value: isSwitched,
                       onChanged: (value) {
