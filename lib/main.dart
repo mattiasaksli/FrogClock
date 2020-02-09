@@ -15,12 +15,13 @@ class MainApp extends StatelessWidget {
       title: appName,
       home: TabsStateful(),
       theme: ThemeData(
-        primaryColor: Color.fromARGB(0xFF, 0x3E, 0x27, 0x23),
-        primaryColorLight: Color.fromARGB(0xFF, 0x6A, 0x4F, 0x4B),
-        primaryColorDark: Color.fromARGB(0xFF, 0x1B, 0x00, 0x00),
-        accentColor: Color.fromARGB(0xFF, 0x64, 0xDD, 0x17),
-      textTheme: TextTheme(
-            body1: TextStyle(fontSize: 30), headline: TextStyle(fontSize: 60))),
+          primaryColor: Color.fromARGB(0xFF, 0x28, 0x16, 0x12),
+          primaryColorLight: Color.fromARGB(0xFF, 0x6A, 0x4F, 0x4B),
+          primaryColorDark: Color.fromARGB(0xFF, 0x1B, 0x00, 0x00),
+          accentColor: Color.fromARGB(0xFF, 0x00, 0xc8, 0x53),
+          textTheme: TextTheme(
+              body1: TextStyle(fontSize: 30),
+              headline: TextStyle(fontSize: 60))),
       supportedLocales: [
         const Locale('en'), // English
       ],
@@ -53,15 +54,22 @@ class TabsState extends State<TabsStateful> {
       length: 4,
       child: Scaffold(
           appBar: AppBar(
+            title: Center(child: Text('FROG ALARM')),
             bottom: TabBar(
               isScrollable: false,
               tabs: [
-                Tab(icon: Icon(Icons.device_unknown,
-                  color: Color.fromARGB(0, 0, 0, 0),)),
+                Tab(
+                    icon: Icon(
+                  Icons.device_unknown,
+                  color: Color.fromARGB(0, 0, 0, 0),
+                )),
                 Tab(icon: Icon(Icons.access_alarms)),
                 Tab(icon: Icon(Icons.timer)),
-                Tab(icon: Icon(Icons.device_unknown,
-                color: Color.fromARGB(0, 0, 0, 0),))
+                Tab(
+                    icon: Icon(
+                  Icons.device_unknown,
+                  color: Color.fromARGB(0, 0, 0, 0),
+                ))
               ],
             ),
           ),
@@ -72,8 +80,7 @@ class TabsState extends State<TabsStateful> {
               TimerStateful(),
               DebugStateful()
             ],
-          )
-      ),
+          )),
     );
   }
 }
@@ -96,7 +103,7 @@ class AlarmState extends State<AlarmStateful> {
             Container(
               margin: EdgeInsets.fromLTRB(0, 80, 0, 50),
               child: Text(
-                "Frog will ring at",
+                "frog will ring at",
                 style: TextStyle(
                     fontSize: 40,
                     color: isSwitched
@@ -119,9 +126,7 @@ class AlarmState extends State<AlarmStateful> {
                       isSwitched = value;
                       print(isSwitched);
                     });
-                  },
-                  activeTrackColor: Colors.lightGreenAccent,
-                  activeColor: Colors.green,
+                  }
                 ),
               ),
             ),
@@ -173,8 +178,9 @@ class BasicTimeFieldState extends State<BasicTimeField> {
                         currentValue ?? TimeOfDay.fromDateTime(DateTime.now()),
                   );
                 },
-                child: Text(localizations.formatTimeOfDay(currentValue,
-                    alwaysUse24HourFormat: true),
-                style: TextStyle(fontSize: 13)))));
+                child: Text(
+                    localizations.formatTimeOfDay(currentValue,
+                        alwaysUse24HourFormat: true),
+                    style: TextStyle(fontSize: 13)))));
   }
 }
