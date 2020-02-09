@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,15 +38,20 @@ class TimerState extends State<TimerStateful> {
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Text(
-                "frog will ring in",
-                style: TextStyle(
-                    fontSize: 40,
-                    color: timerActive
-                        ? Color.fromARGB(255, 0, 70, 0)
-                        : Color.fromARGB(255, 200, 200, 200)),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 0, 30),
+                child: Text(
+                  "frog will ring in",
+                  style: TextStyle(
+                      fontSize: 40,
+                      color: timerActive
+                          ? Color.fromARGB(255, 0, 70, 0)
+                          : Color.fromARGB(255, 200, 200, 200)),
+                ),
               ),
-              clocka(context),
+              Container(
+                child: clocka(context),
+              ),
               Container(
                   margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
                   child: Transform.scale(
@@ -54,6 +60,12 @@ class TimerState extends State<TimerStateful> {
                         child: Icon(buttonIcon, color: Colors.white),
                         onPressed: () {
                           setState(() {
+                            displayHours = (hours < 10) ? "0$hours" : "$hours";
+                            displayMinutes =
+                                (minutes < 10) ? "0$minutes" : "$minutes";
+                            displaySeconds =
+                                (seconds < 10) ? "0$seconds" : "$seconds";
+
                             if (!timerActive) {
                               startTimer();
                             } else {
@@ -123,11 +135,10 @@ class TimerState extends State<TimerStateful> {
     totalSeconds = seconds + minutes * 60 + hours * 60 * 60;
     setFrogTimer(hours, minutes, seconds);
     t = Timer.periodic(Duration(seconds: 1), (timer) {
-      setState(() {
-        if (totalSeconds != 0) {
-          print("$totalSeconds seconds");
-          totalSeconds -= 1;
+      if (totalSeconds != 0) {
+        print("$totalSeconds seconds");
 
+        setState(() {
           hours = totalSeconds ~/ 3600;
           minutes = (totalSeconds % 3600) ~/ 60;
           seconds = totalSeconds % 60;
@@ -135,27 +146,39 @@ class TimerState extends State<TimerStateful> {
           displayHours = (hours < 10) ? "0$hours" : "$hours";
           displayMinutes = (minutes < 10) ? "0$minutes" : "$minutes";
           displaySeconds = (seconds < 10) ? "0$seconds" : "$seconds";
-        } else {
-          timerDone();
-        }
-      });
+
+          totalSeconds -= 1;
+        });
+      } else {
+        seconds = 0;
+        print("$totalSeconds seconds");
+        setState(() {
+          _controllerS.value = TextEditingValue();
+          displayHours = "00";
+          displayMinutes = "00";
+          displaySeconds = "00";
+        });
+
+        timerDone();
+      }
     });
   }
 
   void stopTimer() {
-    setState(() {
-      t.cancel();
-      timerActive = false;
-      buttonIcon = Icons.play_arrow;
-    });
+    print("Timer stopped");
+
+
+    t.cancel();
+      Timer(Duration(seconds: 1), () {
+        setState(() {
+        timerActive = false;
+        buttonIcon = Icons.play_arrow;
+      });
+      });
   }
 
   void timerDone() {
     print("TIMER DONE");
-    animController.forward();
-    Timer(Duration(seconds: 7), () {
-      animController.stop();
-    });
     stopTimer();
 
     //FROG LOGIC
@@ -187,7 +210,7 @@ class TimerState extends State<TimerStateful> {
                       })),
               Text(
                 "Hours",
-                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+                style: TextStyle(color: theme.disabledColor, fontSize: 15),
               )
             ]),
             Text(":", style: TextStyle(fontSize: 30)),
@@ -205,7 +228,7 @@ class TimerState extends State<TimerStateful> {
                       })),
               Text(
                 "Minutes",
-                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+                style: TextStyle(color: theme.disabledColor, fontSize: 15),
               )
             ]),
             Text(":", style: TextStyle(fontSize: 30)),
@@ -223,7 +246,7 @@ class TimerState extends State<TimerStateful> {
                       })),
               Text(
                 "Seconds",
-                style: TextStyle(color: theme.disabledColor, fontSize: 10),
+                style: TextStyle(color: theme.disabledColor, fontSize: 15),
               )
             ]),
           ]);
@@ -269,8 +292,9 @@ class _BlinkingAnimationState extends State<BlinkingTextAnimation>
         animation: animation,
         builder: (BuildContext context, Widget child) {
           return new Container(
-            child: Text("$displayHours : $displayMinutes : $displaySeconds",
-                style: TextStyle(color: animation.value, fontSize: 40)),
+            margin: EdgeInsets.fromLTRB(0, 60, 0, 60),
+            child: Text("$displayHours:$displayMinutes:$displaySeconds",
+                style: TextStyle(color: animation.value, fontSize: 65)),
           );
         });
   }
