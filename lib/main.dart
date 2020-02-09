@@ -95,6 +95,7 @@ class AlarmState extends State<AlarmStateful> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     return Scaffold(
       body: Container(
         margin: EdgeInsets.fromLTRB(50, 50, 50, 50),
@@ -120,14 +121,13 @@ class AlarmState extends State<AlarmStateful> {
               child: Transform.scale(
                 scale: 2.5,
                 child: Switch(
-                  value: isSwitched,
-                  onChanged: (value) {
-                    setState(() {
-                      isSwitched = value;
-                      print(isSwitched);
-                    });
-                  }
-                ),
+                    value: isSwitched,
+                    onChanged: (value) {
+                      setState(() {
+                        isSwitched = value;
+                        print(isSwitched);
+                      });
+                    }),
               ),
             ),
           ],
@@ -163,24 +163,28 @@ class BasicTimeFieldState extends State<BasicTimeField> {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context);
     final MaterialLocalizations localizations =
         MaterialLocalizations.of(context);
     var currentValue = TimeOfDay.now();
     return Center(
-        child: Transform.scale(
-            scale: 8,
-            child: GestureDetector(
-                onTap: () async {
-                  print("Trying to opena di clocka");
-                  currentValue = await showTimePicker(
-                    context: context,
-                    initialTime:
-                        currentValue ?? TimeOfDay.fromDateTime(DateTime.now()),
-                  );
-                },
-                child: Text(
-                    localizations.formatTimeOfDay(currentValue,
-                        alwaysUse24HourFormat: true),
-                    style: TextStyle(fontSize: 13)))));
+        child: Container(
+            margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            child: Transform.scale(
+                scale: 8,
+                child: GestureDetector(
+                    onTap: () async {
+                      print("Trying to opena di clocka");
+                      currentValue = await showTimePicker(
+                        context: context,
+                        initialTime: currentValue ??
+                            TimeOfDay.fromDateTime(DateTime.now()),
+                      );
+                    },
+                    child: Text(
+                        localizations.formatTimeOfDay(currentValue,
+                            alwaysUse24HourFormat: true),
+                        style: TextStyle(
+                            fontSize: 13, color: theme.accentColor))))));
   }
 }
